@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="INFO" monitorInterval="1800" shutdownHook="disable">
+
+    <Properties>
+        <!-- 配置日志文件输出目录 ${sys:user.home} -->
+        <!--共有8个级别，按照从低到高为：All < Trace < Debug < Info < Warn < Error < Fatal < OFF.
+            All:最低等级的，用于打开所有日志记录.
+            Trace:是追踪，就是程序推进以下，你就可以写个trace输出，所以trace应该会特别多，不过没关系，我们可以设置最低日志级别不让他输出.
+            Debug:指出细粒度信息事件对调试应用程序是非常有帮助的.
+            Info:消息在粗粒度级别上突出强调应用程序的运行过程.
+            Warn:输出警告及warn以下级别的日志.
+            Error:输出错误信息日志.
+            Fatal:输出每个严重的错误事件将会导致应用程序的退出的日志.
+            OFF:最高等级的，用于关闭所有日志记录-->
+        <Property name="LOG_HOME">log</Property>
+        <property name="MESSAGE_LOG_FILE_NAME">${LOG_HOME}/message</property>
+        <property name="COMMON_LOG_FILE_NAME">${LOG_HOME}/common</property>
+        <property name="ERROR_LOG_FILE_NAME">${LOG_HOME}/error</property>
+        <property name="DUBBO_LOG_FILE_NAME">${LOG_HOME}/dubbo</property>
+        <property name="SAVE_LOG_FILE_NAME">${LOG_HOME}/save</property>
+        <property name="CHAT_LOG_FILE_NAME">${LOG_HOME}/chat</property>
+        <property name="WARN_LOG_FILE_NAME">${LOG_HOME}/warn</property>
+        <property name="HOTFIX_LOG_FILE_NAME">${LOG_HOME}/hotfix</property>
+    </Properties>
+
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- 服务器启动、关闭信息，游戏中捕捉的异常信息等 -->
+        <RollingFile name="ERROR" fileName="${LOG_HOME}/error.log"
+                     filePattern="${ERROR_LOG_FILE_NAME}/%d{yyyyMMdd}/error.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} %level [%thread] %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${ERROR_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/error.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- 数据库存储记录 -->
+        <RollingFile name="SAVE" fileName="${LOG_HOME}/save.log"
+                     filePattern="${SAVE_LOG_FILE_NAME}/save.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} %level [%thread] %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${SAVE_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/save.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+
+        <!-- 服务器与account服、与客户端、与跨服服务器的协议记录 -->
+        <RollingFile name="MESSAGE" fileName="${LOG_HOME}/message.log"
+                     filePattern="${MESSAGE_LOG_FILE_NAME}/%d{yyyyMMdd}/message.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} %level [%thread] %msg%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${MESSAGE_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/message.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- 聊天日志 -->
+        <RollingFile name="CHAT" fileName="${LOG_HOME}/chat.log"
+                     filePattern="${CHAT_LOG_FILE_NAME}/chat.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss}|%msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${CHAT_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/chat.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- 来自各个功能中的严重警告信息 -->
+        <RollingFile name="WARN" fileName="${LOG_HOME}/warn.log"
+                     filePattern="${WARN_LOG_FILE_NAME}/warn.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} [%thread] %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${WARN_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/warn.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- 公用日志文件，主要记录各个功能模块的状态改变等信息，以便快速定位问题 -->
+        <RollingFile name="COMMON" fileName="${LOG_HOME}/common.log"
+                     filePattern="${COMMON_LOG_FILE_NAME}/%d{yyyyMMdd}/common.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{HH:mm:ss.SSS} [%thread] %msg%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${COMMON_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/common.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- 热更日志文件 -->
+        <RollingFile name="HOTFIX" fileName="${LOG_HOME}/hotfix.log"
+                     filePattern="${HOTFIX_LOG_FILE_NAME}/hotfix.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS}|%msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${HOTFIX_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/hotfix.log.*"/>
+                    <IfLastModified age="15d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- DUBBO 日志 -->
+        <RollingFile name="DUBBO" fileName="${LOG_HOME}/dubbo.log"
+                     filePattern="${DUBBO_LOG_FILE_NAME}/%d{yyyyMMdd}/dubbo.log.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %msg%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="150MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10000">
+                <Delete basePath="${DUBBO_LOG_FILE_NAME}" maxDepth="2">
+                    <IfFileName glob="*/dubbo.log.*"/>
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </appenders>
+
+    <loggers>
+        <logger name="dubbo.accesslog" additivity="false" level="info">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="DUBBO"/>
+        </logger>
+
+        <logger name="org.apache.dubbo" additivity="false" level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="DUBBO"/>
+        </logger>
+
+        <logger name="ERROR" level="trace" additivity="false">
+            <appender-ref ref="ERROR"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="SAVE" level="trace" additivity="false">
+            <appender-ref ref="SAVE"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="MESSAGE" level="info" additivity="false">
+            <appender-ref ref="MESSAGE"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="CHAT" level="trace" additivity="false">
+            <appender-ref ref="CHAT"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="WARN" level="trace" additivity="false">
+            <appender-ref ref="WARN"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="COMMON" level="info" additivity="false">
+            <appender-ref ref="COMMON"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="HOTFIX" level="trace" additivity="false">
+            <appender-ref ref="HOTFIX"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="ERROR"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="COMMON"/>
+        </root>
+    </loggers>
+</configuration>

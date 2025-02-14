@@ -1,0 +1,67 @@
+######################## spring 配置 ###########################
+spring:
+  application:
+    name: playmore_chat
+  profiles:
+    active: dev
+
+  ######################## 分库分表配置 ###########################
+  shardingsphere:
+    sharding:
+      tables:
+        chat_msg:
+          actual-data-nodes: center-sharding-db.chat_msg_$->{0..9}  # 分表
+          table-strategy:
+            inline:
+              sharding-column: room_id # 分表字段
+              algorithm-expression: chat_msg_$->{room_id % 10} #{分表逻辑}
+
+  # http消息转换
+  mvc:
+    converters:
+      preferred-json-mapper: jackson
+######################### 自定义应用配置 ###########################
+
+######################### dubbo3.3.3 配置 ###########################
+dubbo:
+  application:
+    logger: slf4j
+    name: ${spring.application.name}
+  consumer:
+    check: false
+  protocol:
+    accesslog: true
+    name: dubbo
+    port: -1
+  provider:
+    accepts: 2000
+    cluster: failfast
+    dispatcher: message
+    layer: rpc.chat
+    queues: 5000
+    retries: 0
+    threads: 100
+    timeout: 1000
+  registry:
+    address: nacos://172.16.13.191:8848?namespace=0b022b56-d598-43f6-bdf5-9abc4fb1cbf2
+    check: false
+    group: ${environment}
+
+
+######################## prometheus ###########################
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  metrics:
+#    export:
+#      prometheus:
+#        enabled: true
+#    tags:
+#      application: ${spring.application.name}
+######################## mybatis ###########################
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: org.playmore.chat.db.handler
+######################## 服务配置 ###########################

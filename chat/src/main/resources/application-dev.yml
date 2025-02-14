@@ -1,0 +1,60 @@
+######################## spring 配置 ###########################
+spring:
+  ######################## 动态链接源配置 ###########################
+  datasource:
+    dynamic:
+      primary: centerDB # 设置默认的数据源或者数据源组,默认值即为 account
+      strict: true # 严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
+      datasource:
+        # 账号数据库
+        centerDB:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://172.16.12.100:3306/treasure_cross_zp_chat?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true&allowMultiQueries=true
+          username: root
+          password: '00000000'
+        # 配置数据库
+        iniDB:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://172.16.12.100:3306/treasure_ini?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Hongkong&useSSL=true&allowMultiQueries=true
+          username: root
+          password: '00000000'
+      druid:
+        filters: stat,wall,log4j2
+        initial-size: 5
+        max-active: 20
+        max-evictable-idle-time-millis: 300000
+        max-wait: 60000
+        min-evictable-idle-time-millis: 300000
+        min-idle: 5
+        pool-prepared-statements: true
+        share-prepared-statements: true
+        test-on-borrow: false
+        test-on-return: false
+        test-while-idle: true
+        time-between-eviction-runs-millis: 60000
+        validation-query: select 1
+        validation-query-timeout: -1
+  ######################## 分库分表配置 ###########################
+  shardingsphere:
+    datasource:
+      names: center-sharding-db
+      center-sharding-db:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: ${spring.datasource.dynamic.datasource.centerDB.url}
+        username: ${spring.datasource.dynamic.datasource.centerDB.username}
+        password: ${spring.datasource.dynamic.datasource.centerDB.password}
+    props:
+      sql:
+        show: true # 开启打印分表sql, 生产要关闭false
+
+######################### 自定义应用配置 ###########################
+environment: zp-local
+######################### http 配置 ###########################
+
+######################## logging ###########################
+logging:
+  config: classpath:log4j2.xml
+  level:
+    root: info
+######################## 服务配置 ###########################
