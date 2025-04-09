@@ -9,15 +9,15 @@ spring:
         # 账号数据库
         centerDB:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://172.16.12.100:3306/treasure_cross_zp_chat?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true&allowMultiQueries=true
+          url: jdbc:mysql://localhost:3306/playmore_chat?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true&allowMultiQueries=true
           username: root
-          password: '00000000'
+          password: '123456'
         # 配置数据库
         iniDB:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://172.16.12.100:3306/treasure_ini?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Hongkong&useSSL=true&allowMultiQueries=true
+          url: jdbc:mysql://localhost:3306/civilization_static?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Hongkong&useSSL=true&allowMultiQueries=true
           username: root
-          password: '00000000'
+          password: '123456'
       druid:
         filters: stat,wall,log4j2
         initial-size: 5
@@ -58,3 +58,4 @@ logging:
   level:
     root: info
 ######################## 服务配置 ###########################
+persistInterval: 60

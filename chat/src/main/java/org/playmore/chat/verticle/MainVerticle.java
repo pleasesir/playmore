@@ -3,6 +3,8 @@ package org.playmore.chat.verticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import lombok.extern.slf4j.Slf4j;
+import org.playmore.chat.verticle.db.impl.DynamicMysqlVerticle;
+import org.playmore.chat.verticle.db.impl.StaticMysqlVerticle;
 import org.playmore.chat.verticle.http.HttpVerticle;
 import org.playmore.common.verticle.BaseVerticle;
 import org.playmore.common.verticle.DeployVerticleOptions;
@@ -21,13 +23,13 @@ public class MainVerticle extends BaseVerticle {
     public void start(Promise<Void> promise) throws Exception {
         Future<String> httpServer = vertx.deployVerticle(HttpVerticle.class,
                 new DeployVerticleOptions().setInstances(1));
-//        Future<String> dynamicMysql = vertx.deployVerticle(DynamicMysqlVerticle.class,
-//                new DeployVerticleOptions().setInstances(1));
-//        Future<String> staticMysql = vertx.deployVerticle(StaticMysqlVerticle.class,
-//                new DeployVerticleOptions().setInstances(1));
+        Future<String> dynamicMysql = vertx.deployVerticle(DynamicMysqlVerticle.class,
+                new DeployVerticleOptions().setInstances(1));
+        Future<String> staticMysql = vertx.deployVerticle(StaticMysqlVerticle.class,
+                new DeployVerticleOptions().setInstances(1));
 
         // 打印启动结果
-        Future.all(List.of(httpServer)).onComplete(ar -> {
+        Future.all(List.of(httpServer, dynamicMysql, staticMysql)).onComplete(ar -> {
             if (ar.succeeded()) {
                 promise.complete();
                 log.info("start main verticle complete");

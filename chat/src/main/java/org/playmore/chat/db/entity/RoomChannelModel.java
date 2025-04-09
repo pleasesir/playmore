@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.gryphpoem.cross.chat.CrossChatConst;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +41,7 @@ public class RoomChannelModel extends Model<RoomChannelModel> {
         this.roomId = roomId;
         this.chlId = chlId;
         this.lastModifyTime = new Date();
-        this.saveChatCount = CrossChatConst.ROOM_CHANNEL_CHAT_COUNT;
+        this.saveChatCount = 150;
     }
 
     public RoomChannelModel() {

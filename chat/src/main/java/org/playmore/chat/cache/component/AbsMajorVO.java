@@ -1,7 +1,6 @@
 package org.playmore.chat.cache.component;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.playmore.chat.util.CheckNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +41,12 @@ public abstract class AbsMajorVO<K, V extends Model<?>> extends StoredCacheVO im
 
     public AbsMajorVO() {
         this.data = new ConcurrentHashMap<>();
-        this.delSet = new ConcurrentHashSet<>();
+        this.delSet = ConcurrentHashMap.newKeySet();
     }
 
     public AbsMajorVO(Map<K, SimpleCacheVO<V>> dataMap) {
         this.data = dataMap;
-        this.delSet = new ConcurrentHashSet<>();
+        this.delSet = ConcurrentHashMap.newKeySet();
     }
 
     public SimpleCacheVO<V> get(K k) {

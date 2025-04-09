@@ -3,7 +3,6 @@ package org.playmore.chat.db.handler;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -22,7 +21,7 @@ public class ListIntTypeHandler implements TypeHandler<List<Integer>> {
 
     private List<Integer> getIntegerList(String columnValue) {
         List<Integer> list = new ArrayList<>();
-        if (columnValue == null || columnValue.isEmpty() || "".equals(StringUtils.trim(columnValue))) {
+        if (columnValue == null || columnValue.isEmpty() || columnValue.trim().isEmpty()) {
             return list;
         }
         JSONArray array = JSONArray.parseArray(columnValue);

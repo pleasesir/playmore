@@ -406,7 +406,7 @@ public abstract class AbstractPersistCache<K, T> implements IPersist<K, T> {
             }
         }
         try {
-            log.error(String.format("%s, removeCache key :%s, value :%s fail!!!", getClass().getSimpleName(), key, JSONObject.toJSONString(value)));
+            log.error("{}, removeCache key :{}, value :{} fail!!!", getClass().getSimpleName(), key, JSONObject.toJSONString(value));
         } catch (Exception e) {
             log.error("", e);
         }

@@ -122,9 +122,11 @@ public class SimpleCacheVO<T extends Model<?>> extends StoredCacheVO {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof SimpleCacheVO<?> that)) {
+        if (!(o instanceof SimpleCacheVO<?>)) {
             return false;
         }
+
+        SimpleCacheVO<T> that = (SimpleCacheVO<T>) o;
         return Objects.equals(getModel(), that.getModel());
     }
 
