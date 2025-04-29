@@ -7,7 +7,6 @@ import org.playmore.chat.cache.vo.ChatMsgShardingModel;
 import org.playmore.chat.db.entity.ChatMsgModel;
 import org.playmore.chat.db.mapper.ChatMsgMapper;
 import org.playmore.chat.db.service.ChatMsgService;
-import org.playmore.chat.util.CheckNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

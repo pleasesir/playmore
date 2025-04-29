@@ -3,7 +3,6 @@ package org.playmore.chat.cache.component;
 import cn.hutool.core.thread.NamedThreadFactory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import org.playmore.chat.util.CheckNull;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;

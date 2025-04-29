@@ -8,7 +8,6 @@ import org.playmore.chat.cache.component.SimpleCacheVO;
 import org.playmore.chat.config.AppContext;
 import org.playmore.chat.db.entity.ChatMsgModel;
 import org.playmore.chat.db.mapper.ChatMsgMapper;
-import org.playmore.chat.util.CheckNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

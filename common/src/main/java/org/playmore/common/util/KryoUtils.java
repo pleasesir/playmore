@@ -1,4 +1,4 @@
-package org.playmore.chat.util;
+package org.playmore.common.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

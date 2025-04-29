@@ -1,4 +1,5 @@
-package org.playmore.chat.util;
+package org.playmore.common.util;
+
 
 import java.lang.reflect.Array;
 import java.util.BitSet;
@@ -7,11 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 检查对象是否为空工具类
- *
- * @Author: zhangpeng
- * @Date: 2023/06/16/16:03
- * @Description:
+ * @author zhangpeng
+ * @version 1.0
+ * @date 2025-04-26 22:32
+ * @description TODO
  */
 public class CheckNull {
     public static boolean isEmpty(Object obj) {
@@ -38,7 +38,7 @@ public class CheckNull {
     /**
      * 检查多个对象是否有为null
      *
-     * @param params
+     * @param params 参数数组
      * @return
      */
     public static boolean hasNull(Object... params) {

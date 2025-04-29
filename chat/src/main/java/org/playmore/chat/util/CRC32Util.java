@@ -1,5 +1,6 @@
 package org.playmore.chat.util;
 
+import org.playmore.common.util.KryoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
