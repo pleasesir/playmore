@@ -3,7 +3,7 @@ package org.playmore.api.handler.abs;
 
 import com.google.protobuf.GeneratedMessage;
 import org.playmore.api.config.AppContext;
-import org.playmore.api.constant.GameError;
+import org.playmore.api.exception.GameError;
 import org.playmore.api.exception.MwException;
 import org.playmore.common.exception.TreasureException;
 import org.playmore.common.msg.BaseRpcMsg;

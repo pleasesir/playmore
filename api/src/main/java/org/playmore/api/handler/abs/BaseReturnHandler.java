@@ -2,7 +2,7 @@ package org.playmore.api.handler.abs;
 
 
 import com.google.protobuf.GeneratedMessage;
-import org.playmore.api.constant.GameError;
+import org.playmore.api.exception.GameError;
 import org.playmore.api.handler.BaseRpcHandler;
 import org.playmore.common.msg.BaseRpcMsg;
 import org.playmore.common.util.LogUtil;

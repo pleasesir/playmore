@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.playmore.api.annotation.ExternalSubscribe;
 import org.playmore.api.annotation.Subscribe;
 import org.playmore.api.config.AppContext;
+import org.playmore.api.config.BaseGmCmdProcessor;
 import org.playmore.api.verticle.BaseVerticle;
 import org.playmore.api.verticle.eventbus.ExternalEventConsumer;
 import org.playmore.api.verticle.eventbus.event.Address;

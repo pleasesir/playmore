@@ -5,7 +5,10 @@ import com.esotericsoftware.reflectasm.MethodAccess;
 import lombok.Getter;
 import org.playmore.api.annotation.GmCmd;
 import org.playmore.api.domain.gm.GmRelation;
+import org.playmore.api.exception.GameError;
+import org.playmore.api.exception.MwException;
 import org.playmore.api.verticle.BaseVerticle;
+import org.playmore.api.verticle.eventbus.ExternalEventConsumer;
 import org.playmore.api.verticle.eventbus.event.Address;
 import org.playmore.api.verticle.manager.ExternalEventManager;
 import org.playmore.common.util.CheckNull;
@@ -39,7 +42,7 @@ public abstract class BaseGmCmdProcessor {
 
     public void checkErrors() throws Exception {
         if (CheckNull.nonEmpty(errors)) {
-            throw new Exception(String.format("存在重复的GM命令, %s", ListUtils.toString(errors)));
+            throw new Exception(String.format("存在重复的GM命令, %s", errors));
         }
     }
 

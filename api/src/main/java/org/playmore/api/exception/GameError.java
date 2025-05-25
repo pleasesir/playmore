@@ -1,4 +1,4 @@
-package org.playmore.api.constant;
+package org.playmore.api.exception;
 
 
 import lombok.Getter;
@@ -30,7 +30,9 @@ public enum GameError {
     SERVER_CONNECT_TIMEOUT(25, "服务器连接超时"),
     SERVER_IS_BUSY(26, "服务器繁忙中"),
     CLUSTER_INVOKE_FAIL(27, "集群调用失败"),
-    PARSE_PROTO_FAIL(28, "协议解析报错"),;
+    PARSE_PROTO_FAIL(28, "协议解析报错"),
+
+    PARAM_ERROR(29, "参数错误"),;
     private final int code;
     @Setter
     private String msg;

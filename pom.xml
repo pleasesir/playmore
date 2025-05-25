@@ -20,6 +20,8 @@
         <module>api</module>
         <module>common</module>
         <module>chat</module>
+        <module>gateway</module>
+        <module>game</module>
     </modules>
 
     <properties>

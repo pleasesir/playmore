@@ -22,6 +22,7 @@ public class GmRelation {
     protected Address[] events;
     protected boolean uniqueAddress;
     @Setter
+    @Getter
     private ExternalEventConsumer consumer;
 
     public GmRelation(Class<? extends BaseVerticle> clazz, ExternalEventConsumer consumer) {

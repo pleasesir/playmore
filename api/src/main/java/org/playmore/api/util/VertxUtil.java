@@ -11,7 +11,7 @@ import org.apache.dubbo.remoting.ExecutionException;
 import org.apache.dubbo.remoting.RemotingException;
 import org.apache.dubbo.remoting.TimeoutException;
 import org.apache.dubbo.rpc.RpcException;
-import org.playmore.api.constant.GameError;
+import org.playmore.api.exception.GameError;
 import org.playmore.api.exception.MwException;
 import org.playmore.api.verticle.codec.InJvmMessageCodec;
 import org.playmore.api.verticle.eventbus.event.Address;

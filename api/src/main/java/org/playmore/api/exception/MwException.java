@@ -1,7 +1,6 @@
 package org.playmore.api.exception;
 
 
-import org.playmore.api.constant.GameError;
 import org.playmore.common.exception.ExceptionMessage;
 import org.playmore.common.exception.TreasureException;
 
