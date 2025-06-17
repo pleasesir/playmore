@@ -16,7 +16,6 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>ui</module>
         <module>api</module>
         <module>common</module>
         <module>chat</module>
@@ -28,12 +27,13 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vert.x.version>4.5.14</vert.x.version>
-        <lombok.version>1.18.36</lombok.version>
+        <vert.x.version>4.5.15</vert.x.version>
+        <lombok.version>1.18.38</lombok.version>
         <spring.boot.version>3.4.2</spring.boot.version>
         <log4j-api.version>2.24.3</log4j-api.version>
         <disruptor.version>3.4.4</disruptor.version>
         <dubbo.version>3.3.3</dubbo.version>
+        <playmore.api.version>1.0.0-SNAPSHOT</playmore.api.version>
     </properties>
 
     <dependencies>

@@ -17,4 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.playmore</groupId>-->
+<!--            <artifactId>api</artifactId>-->
+<!--            <version>${playmore.api.version}</version>-->
+<!--        </dependency>-->
+    </dependencies>
 </project>

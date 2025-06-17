@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>api</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
 
     <!--定义snapshots库和releases库的nexus地址-->
@@ -40,7 +41,6 @@
             <groupId>org.playmore</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
 <!--        <dependency>-->

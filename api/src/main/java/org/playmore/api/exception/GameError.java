@@ -32,10 +32,11 @@ public enum GameError {
     CLUSTER_INVOKE_FAIL(27, "集群调用失败"),
     PARSE_PROTO_FAIL(28, "协议解析报错"),
 
-    PARAM_ERROR(29, "参数错误"),;
+    PARAM_ERROR(29, "参数错误"),
+
+    OK(200, "成功");
     private final int code;
-    @Setter
-    private String msg;
+    private final String msg;
 
     GameError(int code, String msg) {
         this.code = code;
