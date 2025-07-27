@@ -2,6 +2,7 @@ package org.playmore.api.util;
 
 import com.google.protobuf.GeneratedMessage;
 import org.playmore.api.exception.GameError;
+import org.playmore.pb.BasePb;
 
 /**
  * @ClassName CommonPbHelper

@@ -1,6 +1,7 @@
 package org.playmore.api.util;
 
 import org.playmore.common.msg.BaseRpcMsg;
+import org.playmore.pb.BasePb;
 
 /**
  * @ClassName MsgUtil
@@ -15,8 +16,7 @@ import org.playmore.common.msg.BaseRpcMsg;
 public class MsgUtil {
 
     public static <T extends BaseRpcMsg> T createRsMsg(BaseRpcMsg rqMsg, BasePb.Base base) {
-        if (rqMsg instanceof RpcMsg) {
-            return (T) new RpcMsg(rqMsg.getRoleId(), rqMsg.getFromServerId(), base);
-        }
+
+        return null;
     }
 }

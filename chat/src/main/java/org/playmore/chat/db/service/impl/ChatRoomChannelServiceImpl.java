@@ -7,6 +7,7 @@ import org.playmore.chat.cache.vo.ChannelMapVO;
 import org.playmore.chat.db.entity.RoomChannelModel;
 import org.playmore.chat.db.mapper.ChatRoomChannelMapper;
 import org.playmore.chat.db.service.ChatRoomChannelService;
+import org.playmore.common.util.CheckNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

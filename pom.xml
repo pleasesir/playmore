@@ -34,6 +34,11 @@
         <disruptor.version>3.4.4</disruptor.version>
         <dubbo.version>3.3.3</dubbo.version>
         <playmore.api.version>1.0.0-SNAPSHOT</playmore.api.version>
+
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
     </properties>
 
     <dependencies>

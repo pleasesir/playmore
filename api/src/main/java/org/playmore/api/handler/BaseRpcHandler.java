@@ -14,6 +14,7 @@ import org.playmore.common.util.ExceptionUtil;
 import org.playmore.common.util.LogUtil;
 import org.playmore.common.util.MdcUtil;
 import org.playmore.common.util.NumberUtil;
+import org.playmore.pb.BasePb;
 import org.slf4j.MDC;
 
 /**
@@ -36,9 +37,9 @@ public abstract class BaseRpcHandler<M extends BaseRpcMsg> implements Runnable {
     protected Throwable ex;
     protected String req;
     @Setter
-    protected Object rqMsg;
+    protected BasePb.Base rqMsg;
     @Getter
-    protected Object rsMsg;
+    protected BasePb.Base rsMsg;
     protected int rqCmd;
     protected int rsCmd;
     @Setter

@@ -1,6 +1,7 @@
 package org.playmore.chat.cache.component;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import org.playmore.common.util.CheckNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

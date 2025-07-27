@@ -10,5 +10,5 @@ package org.playmore.game.rpc.handler;
  * @UpdateRemark: 更新的信息
  * @Version: 1.0
  */
-public abstract class BaseGatewayHandler extends BaseReturnHandler {
+public abstract class BaseGatewayHandler  {
 }

@@ -8,11 +8,4 @@ package org.playmore.common.eventbus;
  * @Description:
  */
 public enum EventbusAddress {
-    /**
-     *
-     */
-    CHAT_MESSAGE(),
-    OTHER(),
-    INI(),
-    ;
 }

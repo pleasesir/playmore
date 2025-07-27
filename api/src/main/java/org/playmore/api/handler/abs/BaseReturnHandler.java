@@ -8,6 +8,7 @@ import org.playmore.api.util.CommonPbHelper;
 import org.playmore.api.util.MsgUtil;
 import org.playmore.common.msg.BaseRpcMsg;
 import org.playmore.common.util.LogUtil;
+import org.playmore.pb.BasePb;
 
 import java.util.Objects;
 

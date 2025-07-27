@@ -120,6 +120,7 @@ public class SimpleCacheVO<T extends Model<?>> extends StoredCacheVO {
                 '}';
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SimpleCacheVO<?>)) {

@@ -5,6 +5,7 @@ import org.playmore.chat.cache.component.AbsMajorVO;
 import org.playmore.chat.cache.component.PersistContext;
 import org.playmore.chat.cache.component.SimpleCacheVO;
 import org.playmore.chat.db.entity.ChatPrivateRoomModel;
+import org.playmore.common.util.CheckNull;
 
 import java.util.Map;
 import java.util.Objects;
