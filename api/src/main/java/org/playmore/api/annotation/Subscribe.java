@@ -1,8 +1,8 @@
 package org.playmore.api.annotation;
 
 
-import org.playmore.api.verticle.eventbus.event.Address;
 import org.playmore.api.verticle.eventbus.event.impl.DatabaseEvent;
+import org.playmore.api.verticle.eventbus.event.impl.GameEvent;
 import org.playmore.api.verticle.eventbus.event.impl.GmEvent;
 
 import java.lang.annotation.*;
@@ -77,13 +77,13 @@ public @interface Subscribe {
 //     * @return 配置事件枚举
 //     */
 //    ConfigEvent[] configEvent() default ConfigEvent.NONE;
-//
-//    /**
-//     * 游戏服事件
-//     *
-//     * @return 游戏服事件枚举
-//     */
-//    GameEvent[] gameEvent() default GameEvent.NONE;
+
+    /**
+     * 游戏服事件
+     *
+     * @return 游戏服事件枚举
+     */
+    GameEvent[] gameEvent() default GameEvent.NONE;
 //
 //    /**
 //     * gm事件

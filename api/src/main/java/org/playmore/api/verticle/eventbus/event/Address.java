@@ -12,4 +12,8 @@ public interface Address {
                 + toString().toLowerCase(Locale.ROOT);
     }
 
+    default boolean uniqueAddress() {
+        return true;
+    }
+
 }

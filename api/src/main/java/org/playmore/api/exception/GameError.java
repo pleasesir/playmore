@@ -2,7 +2,6 @@ package org.playmore.api.exception;
 
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -34,6 +33,8 @@ public enum GameError {
 
     PARAM_ERROR(29, "参数错误"),
 
+    FUNCTION_FOUND_WRONG(30, "功能未找到"),
+
     OK(200, "成功");
     private final int code;
     private final String msg;
@@ -48,7 +49,7 @@ public enum GameError {
     }
 
     public static GameError valueOf(int code) {
-        for (GameError err : values()) {
+        for (GameError err : GameError.values()) {
             if (err.getCode() == code) {
                 return err;
             }
@@ -62,7 +63,7 @@ public enum GameError {
      */
     public static void codeDuplicateCheck() {
         BitSet bitSet = new BitSet();
-        for (GameError error : values()) {
+        for (GameError error : GameError.values()) {
             if (!bitSet.get(error.getCode())) {
                 bitSet.set(error.getCode());
             } else {

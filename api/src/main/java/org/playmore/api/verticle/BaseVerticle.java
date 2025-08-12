@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.playmore.api.annotation.Subscribe;
 import org.playmore.api.config.AppContext;
+import org.playmore.api.util.MethodUtil;
 import org.playmore.api.util.VertxUtil;
 import org.playmore.api.verticle.eventbus.ExternalEventConsumer;
 import org.playmore.api.verticle.eventbus.event.Address;
@@ -39,7 +40,6 @@ import static org.playmore.api.util.VertxUtil.buildOptions;
  */
 @Slf4j
 public class BaseVerticle extends AbstractVerticle {
-
     /**
      * method-map
      */
@@ -74,7 +74,7 @@ public class BaseVerticle extends AbstractVerticle {
     /**
      * 注册外部事件总线消费者具体逻辑
      *
-     * @param consumers
+     * @param consumers 事件订阅者列表
      */
     private void registerDetail(List<ExternalEventConsumer> consumers) {
         if (CheckNull.nonEmpty(consumers)) {
@@ -84,7 +84,9 @@ public class BaseVerticle extends AbstractVerticle {
                 }
 
                 for (Address address : consumer.addresses()) {
-                    register(address, consumer.subscribe().uniqueAddress(), consumer::invoke);
+                    String consumerName = MethodUtil.consumerName(consumer.access(),
+                            consumer.instance(), consumer.methodIndex());
+                    register(address, consumerName, consumer::invoke);
                 }
             });
         }
@@ -103,21 +105,20 @@ public class BaseVerticle extends AbstractVerticle {
                 continue;
             }
 
-            boolean uniqueAddress = subscribe.uniqueAddress();
             for (String subMethodName : subMethod.getMethodNames()) {
-                if (ArrayUtils.contains(ANN_METHOD_NAMES, subMethodName)) {
+                if (ArrayUtils.contains(BaseVerticle.ANN_METHOD_NAMES, subMethodName)) {
                     continue;
                 }
                 int subIndex = subMethod.getIndex(subMethodName);
                 Object rs = subMethod.invoke(subscribe, subIndex);
                 if (rs.getClass().isArray()) {
-                    Stream.of((Object[]) rs).forEach(obj -> handleRegister(obj, method, uniqueAddress));
+                    Stream.of((Object[]) rs).forEach(obj -> handleRegister(obj, method));
                 }
             }
         }
     }
 
-    private void handleRegister(Object rs, Method method, boolean needUniqueAddress) {
+    private void handleRegister(Object rs, Method method) {
         if (!(rs instanceof Address address)) {
             return;
         }
@@ -132,18 +133,20 @@ public class BaseVerticle extends AbstractVerticle {
             if (v == null) {
                 return methodAccess.getIndex(method.getName());
             } else {
-                log.error("methodAccessInfo is not null, clazz:{}, address: {}",
+                BaseVerticle.log.error("methodAccessInfo is not null, clazz:{}, address: {}",
                         this.getClass().getSimpleName(), address);
                 return v;
             }
         });
 
-        register(address, needUniqueAddress, (message) -> {
-            Integer index = methodMap.get(address);
-            if (index == null) {
-                log.error("methodAccessInfo is null, address: {}", address);
-                return null;
-            }
+        Integer index = methodMap.get(address);
+        if (index == null) {
+            BaseVerticle.log.error("methodAccessInfo is null, address: {}", address);
+            return;
+        }
+
+        String consumerName = MethodUtil.consumerName(methodAccess, this, index);
+        register(address, consumerName, (message) -> {
             return methodAccess.invoke(this, index, message);
         });
     }
@@ -254,45 +257,63 @@ public class BaseVerticle extends AbstractVerticle {
      * @param consumer 接收请求的处理
      * @param <T>      返回的请求结果类型
      */
-    public <P, T> void register(Address address, boolean needUniqueAddress, Function<P, T> consumer) {
-        String realAddress = needUniqueAddress ? VertxUtil.buildAddress(address, uniqueAddress()) : address.getAddress();
-        registerFunction(realAddress, consumer);
+    public <P, T> void register(Address address,
+                                String consumerName,
+                                Function<P, T> consumer) {
+        String realAddress;
+        if (address.uniqueAddress()) {
+            realAddress = VertxUtil.buildAddress(address, uniqueAddress());
+        } else {
+            realAddress = address.getAddress();
+        }
+        registerFunction(realAddress, consumerName, consumer);
     }
 
     /**
      * 注册cast类消费者
      *
-     * @param address           消费注册地址
-     * @param needUniqueAddress 是否需要唯一地址
-     * @param consumer          消费者
+     * @param address      消费注册地址
+     * @param consumerName 消费者名称
+     * @param consumer     消费者
      */
-    public <T> void register(Address address, boolean needUniqueAddress, Consumer<T> consumer) {
-        String realAddress = needUniqueAddress ? VertxUtil.buildAddress(address, uniqueAddress()) : address.getAddress();
-        registerConsumer(realAddress, consumer);
+    public <T> void register(Address address,
+                             String consumerName,
+                             Consumer<T> consumer) {
+        String realAddress;
+        if (address.uniqueAddress()) {
+            realAddress = VertxUtil.buildAddress(address, uniqueAddress());
+        } else {
+            realAddress = VertxUtil.buildAddress(address);
+        }
+        registerConsumer(realAddress, consumerName, consumer);
     }
 
     /**
      * 注册callback消费者
      *
-     * @param address           消费注册地址
-     * @param needUniqueAddress 是否需要唯一地址
-     * @param consumer          消费者
+     * @param address      消费注册地址
+     * @param nua          是否需要唯一地址
+     * @param consumerName 消费者名称
+     * @param consumer     消费者
      * @param <T>
      */
-    public <P, T> void register(String address, boolean needUniqueAddress, Function<P, T> consumer) {
-        String realAddress = needUniqueAddress ? VertxUtil.buildAddress(address, uniqueAddress()) : address;
-        registerFunction(realAddress, consumer);
+    public <P, T> void register(String address, boolean nua, String consumerName, Function<P, T> consumer) {
+        String realAddress = nua ? VertxUtil.buildAddress(address, uniqueAddress()) : address;
+        registerFunction(realAddress, consumerName, consumer);
     }
 
     /**
      * 注册callback消费者
      *
-     * @param realAddress
-     * @param consumer
-     * @param <P>
-     * @param <T>
+     * @param realAddress  真实请求地址
+     * @param consumerName 消费者名称
+     * @param consumer     消费者逻辑
+     * @param <P>          逻辑参数泛型
+     * @param <T>          返回参数泛型
      */
-    private <P, T> void registerFunction(String realAddress, Function<P, T> consumer) {
+    private <P, T> void registerFunction(String realAddress,
+                                         String consumerName,
+                                         Function<P, T> consumer) {
         vertx.eventBus().<P>localConsumer(realAddress, event -> {
             long startTime = System.currentTimeMillis();
             P msg = event.body();
@@ -300,13 +321,15 @@ public class BaseVerticle extends AbstractVerticle {
                 T rs = consumer.apply(msg);
                 event.reply(rs, buildOptions());
             } catch (Throwable tx) {
-                LogUtil.error("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer: ", consumer, ", error: ", tx);
+                LogUtil.error("vertx eventbus, ads: ", realAddress, "msg: ", msg,
+                        ", consumer:", consumerName, ", error: ", tx);
                 event.reply(tx);
             }
 
             long costMills = System.currentTimeMillis() - startTime;
             if (costMills >= NumberUtil.HALF_OF_HUNDRED) {
-                LogUtil.warn("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer: ", consumer, ", costMills: ", costMills, "ms");
+                LogUtil.warn("vertx eventbus, ads: ", realAddress, "msg: ", msg,
+                        ", consumer:", consumerName, ", costMills: ", costMills, "ms");
             }
         });
     }
@@ -314,11 +337,13 @@ public class BaseVerticle extends AbstractVerticle {
     /**
      * 注册cast事件消费者
      *
-     * @param realAddress
-     * @param consumer
-     * @param <T>
+     * @param realAddress 实际地址
+     * @param consumer    事件消费者
+     * @param <T>         事件消费者返回参数泛型
      */
-    private <T> void registerConsumer(String realAddress, Consumer<T> consumer) {
+    private <T> void registerConsumer(String realAddress,
+                                      String consumerName,
+                                      Consumer<T> consumer) {
         vertx.eventBus().<T>localConsumer(realAddress, event -> {
             long startTime = System.currentTimeMillis();
             T msg = event.body();
@@ -326,12 +351,12 @@ public class BaseVerticle extends AbstractVerticle {
                 consumer.accept(msg);
                 event.reply(null);
             } catch (Throwable tx) {
-                LogUtil.error("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer: ", consumer, ", error: ", tx);
+                LogUtil.error("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer:", consumerName, ", error: ", tx);
             }
 
             long costMills = System.currentTimeMillis() - startTime;
             if (costMills >= NumberUtil.HALF_OF_HUNDRED) {
-                LogUtil.warn("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer: ", consumer, ", costMills: ", costMills, "ms");
+                LogUtil.warn("vertx eventbus, ads: ", realAddress, "msg: ", msg, ", consumer:", consumerName, ", costMills: ", costMills, "ms");
             }
         });
     }
@@ -339,13 +364,14 @@ public class BaseVerticle extends AbstractVerticle {
     /**
      * 注册cast类消费者
      *
-     * @param address
-     * @param needUniqueAddress
-     * @param consumer
+     * @param address      订阅地址
+     * @param nua          是否拼接verticle唯一地址
+     * @param consumerName 消费者名称
+     * @param consumer     事件消费者
      */
-    public <T> void register(String address, boolean needUniqueAddress, Consumer<T> consumer) {
-        String realAddress = needUniqueAddress ? VertxUtil.buildAddress(address, uniqueAddress()) : address;
-        registerConsumer(realAddress, consumer);
+    public <T> void register(String address, boolean nua, String consumerName, Consumer<T> consumer) {
+        String realAddress = nua ? VertxUtil.buildAddress(address, uniqueAddress()) : address;
+        registerConsumer(realAddress, consumerName, consumer);
     }
 
     /**
