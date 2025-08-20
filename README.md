@@ -3,98 +3,94 @@
 [![JDK Version](https://img.shields.io/badge/JDK-21-blue)](https://openjdk.org/projects/jdk/21/)
 [![Vert.x Version](https://img.shields.io/badge/Vert.x-4.5-red)](https://vertx.io/)
 
-下一代基于协程架构的高性能Java游戏服务器解决方案
+Next-generation high-performance Java game server solution based on coroutine architecture
 
-## 📖 项目背景
+## 📖 Project Background
 
-### 技术演进路线
+### Technical Evolution Path
 
-- **传统架构**（JDK21前）  
-  采用异步编程+事件监听模式，面临以下痛点：
-    - 回调地狱导致代码可维护性差
-    - 线程上下文切换开销大
-    - 资源利用率低
+- **Traditional Architecture** (Before JDK21)  
+  Using asynchronous programming + event listener pattern, facing the following pain points:
+    - Callback hell leading to poor code maintainability
+    - High overhead of thread context switching
+    - Low resource utilization
 
-- **新时代架构**（JDK21+）  
-  结合Loom项目的虚拟线程与Vert.x的Actor模型：
-    - 🚀 虚拟线程实现轻量级协程（每请求1协程）
-    - ⚡ Vert.x提供高效的Actor模型实现
-    - 💡 Spring Boot 3.4 + Dubbo 3.3构建微服务生态
+- **New Era Architecture** (JDK21+)  
+  Combining Loom project's virtual threads with Vert.x's Actor model:
+    - 🚀 Virtual threads implementing lightweight coroutines (one coroutine per request)
+    - ⚡ Vert.x providing efficient Actor model implementation
+    - 💡 Spring Boot 3.4 + Dubbo 3.3 building microservice ecosystem
 
-## 🛠️ 技术选型
+## 🛠️ Technology Stack
 
-### 核心组件
+### Core Components
 
-| 组件           | 版本     | 职责           |
-|--------------|--------|--------------|
-| OpenJDK      | 21     | 虚拟线程/结构化并发   |
-| Vert.x Core  | 4.5.13 | 事件总线/Actor模型 |
-| Spring Boot  | 3.4.2  | 依赖注入/配置中心    |
-| Apache Dubbo | 3.3.3  | RPC框架/服务治理   |
+| Component    | Version | Responsibility            |
+|--------------|---------|---------------------------|
+| OpenJDK      | 21      | Virtual threads/Structured concurrency |
+| Vert.x Core  | 4.5.13  | Event bus/Actor model     |
+| Spring Boot  | 3.4.2   | Dependency injection/Configuration center |
+| Apache Dubbo | 3.3.3   | RPC framework/Service governance |
 
-### 架构特性
+## 📚 Architecture Diagram
 
-## 📅 版本演进
+![img_2.png](img_2.png)(https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/reference-manual/config/spring/spring-boot/)
+![img_1.png](img_1.png)(https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/reference-manual/registry/nacos/#12-nacos-%E7%89%88%E6%9C%AC)
+
+### Architecture Features
+
+## 📅 Version Evolution
 
 ### 2025.04.08 (build-2100)
 
-- [✅] 代码迁移新框架基本完成
-- [✅] 完善部分公共依赖逻辑
+- [✅] Basic code migration to new framework completed
+- [✅] Improved some common dependency logic
 
 ### 2025.03.10 (build-2100)
 
-- [✅] 完善部分公共依赖逻辑
-- [✅] 完成manager服务迁移与重构
+- [✅] Improved some common dependency logic
+- [✅] Completed manager service migration and refactoring
 
 ### 2025.03.08 (build-2100)
 
-- [✅] 完善部分公共依赖逻辑
-- [✅] 完成fight服务迁移与重构
+- [✅] Improved some common dependency logic
+- [✅] Completed fight service migration and refactoring
 
 ### 2025.03.07 (build-2100)
 
-- [✅] 完善部分公共依赖逻辑
-- [✅] 完成账号服重构
+- [✅] Improved some common dependency logic
+- [✅] Completed account server refactoring
 
 ### 2025.02.27 (build-2100)
 
-- [✅] 完成聊天模块压测
+- [✅] Completed chat module stress testing
 
 ### 2025.02.21 (build-2100)
 
-- [✅] 完成聊天模块重构
-- [🔄] 战斗系统协程化改造（进行中）
-- [📊] 新增性能监控埋点
+- [✅] Completed chat module refactoring
+- [🔄] Battle system coroutine transformation (in progress)
+- [📊] Added performance monitoring埋点
 
 ### 2025.02.14 (build-1840)
 
-- [⬆️] 升级至Spring Boot 3.4.2
-- [🔗] 集成Dubbo 3.3.3, Vert.x 4.5.13
-- [🎯] 确立架构原型
-
-
-- # 2025.2.14 11:40 更新日志
-
-1. 因为jdk版本原因, spring boot版本依赖需要升级至3.4.2
-2. 因为spring boot升级, dubbo版本对应升级至3.3.3
+- [⬆️] Upgraded to Spring Boot 3.4.2
+- [🔗] Integrated Dubbo 3.3.3, Vert.x 4.5.13
+- [🎯] Established architecture prototype
 
 ---
 
-> **架构哲学**：通过虚拟线程实现`1:1`的请求-协程映射，配合Vert.x的Actor模型，在保持同步编程风格的同时达到更高并发性能。🔥
+> **Architecture Philosophy**: Achieve `1:1` request-coroutine mapping through virtual threads, combined with Vert.x's Actor model, to reach higher concurrent performance while maintaining synchronous programming style. 🔥
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-## 📚 压力测试结果
+## 📚 Stress Test Results
 
 ![img.png](img.png)
-协议测试内容:
+Protocol test content:
 
-- 8000个玩家同时登陆
-- 8000个玩家同时发送消息:
+- 8000 players log in simultaneously
+- 8000 players send messages simultaneously:
   cmd: 1113 [DoSomeRq.ext]
   {
   str: 'resourceChange 1 1 10000'
   }
-
-
-
