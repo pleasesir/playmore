@@ -26,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static org.playmore.common.constant.VertxContextConst.ACTOR_KEY;
 import static org.playmore.common.util.VertxHolder.vertx;
 
 
@@ -49,6 +50,10 @@ public class VertxUtil {
         return Vertx.currentContext().get(con);
     }
 
+    public static <T> T actor() {
+        return VertxUtil.contextData(ACTOR_KEY);
+    }
+
     /**
      * vertx事件总线发送消息, 并等待事件结果
      * 调用此方法必须在虚拟线程中
@@ -61,8 +66,8 @@ public class VertxUtil {
     @SuppressWarnings("unchecked")
     public static <T> T requestEvent(String address, Object message) {
         DeliveryOptions options = VertxUtil.buildOptions();
-        Object rs = await(vertx.eventBus().request(address, message, options)).body();
-        handleInThrowable(rs);
+        Object rs = VertxUtil.await(vertx.eventBus().request(address, message, options)).body();
+        VertxUtil.handleInThrowable(rs);
 
         return (T) rs;
     }
@@ -78,8 +83,8 @@ public class VertxUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T requestEvent(Address address, Object message, DeliveryOptions options) {
-        Object rs = await(vertx.eventBus().request(address.getAddress(), message, options)).body();
-        handleInThrowable(rs);
+        Object rs = VertxUtil.await(vertx.eventBus().request(address.getAddress(), message, options)).body();
+        VertxUtil.handleInThrowable(rs);
         return (T) rs;
     }
 
@@ -94,7 +99,7 @@ public class VertxUtil {
      */
     public static <T> T requestEvent(Address address, Object message) {
         DeliveryOptions options = VertxUtil.buildOptions();
-        return requestEvent(address, message, options);
+        return VertxUtil.requestEvent(address, message, options);
     }
 
     /**
@@ -166,9 +171,9 @@ public class VertxUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T requestEvent(Address address, Object message, DeliveryOptions options, String... params) {
-        String rqAddress = buildAddress(address.getAddress(), params);
-        Object rs = await(vertx.eventBus().request(rqAddress, message, options)).body();
-        handleInThrowable(rs);
+        String rqAddress = VertxUtil.buildAddress(address.getAddress(), params);
+        Object rs = VertxUtil.await(vertx.eventBus().request(rqAddress, message, options)).body();
+        VertxUtil.handleInThrowable(rs);
         return (T) rs;
     }
 
@@ -184,7 +189,7 @@ public class VertxUtil {
      */
     public static <T> T requestEvent(Address address, Object message, String... params) {
         DeliveryOptions options = VertxUtil.buildOptions();
-        return requestEvent(address, message, options, params);
+        return VertxUtil.requestEvent(address, message, options, params);
     }
 
     /**
@@ -194,8 +199,8 @@ public class VertxUtil {
      * @param message eventbus请求消息体
      */
     public static void publishEvent(Address address, Object message, String... params) {
-        DeliveryOptions options = buildOptions();
-        String adExt = buildAddress(address.getAddress(), params);
+        DeliveryOptions options = VertxUtil.buildOptions();
+        String adExt = VertxUtil.buildAddress(address.getAddress(), params);
         vertx.eventBus().publish(adExt, message, options);
     }
 
@@ -206,7 +211,7 @@ public class VertxUtil {
      * @param message eventbus请求消息体
      */
     public static void publishEvent(String address, Object message) {
-        DeliveryOptions options = buildOptions();
+        DeliveryOptions options = VertxUtil.buildOptions();
         vertx.eventBus().publish(address, message, options);
     }
 
@@ -217,7 +222,7 @@ public class VertxUtil {
      * @param message eventbus请求消息体
      */
     public static void sendEvent(Address address, Object message) {
-        DeliveryOptions options = buildOptions();
+        DeliveryOptions options = VertxUtil.buildOptions();
         vertx.eventBus().send(address.getAddress(), message, options);
     }
 
@@ -229,7 +234,7 @@ public class VertxUtil {
      */
     public static void sendEvent(Address address, Object message, String... params) {
         String realAddress = VertxUtil.buildAddress(address.getAddress(), params);
-        sendEvent(realAddress, message);
+        VertxUtil.sendEvent(realAddress, message);
     }
 
     /**
@@ -239,7 +244,7 @@ public class VertxUtil {
      * @param message eventbus请求消息体
      */
     public static void sendEvent(String address, Object message) {
-        DeliveryOptions options = buildOptions();
+        DeliveryOptions options = VertxUtil.buildOptions();
         vertx.eventBus().send(address, message, options);
     }
 
@@ -253,7 +258,7 @@ public class VertxUtil {
      * @return 返回未来T结果
      */
     public static <T> Future<Message<T>> futureEvent(String address, Object message) {
-        DeliveryOptions options = buildOptions();
+        DeliveryOptions options = VertxUtil.buildOptions();
         return vertx.eventBus().request(address, message, options);
     }
 
@@ -268,7 +273,7 @@ public class VertxUtil {
      */
     public static <T> Future<Message<T>> futureEvent(Address address, Object message, DeliveryOptions options,
                                                      String... params) {
-        String ext = buildAddress(address.getAddress(), params);
+        String ext = VertxUtil.buildAddress(address.getAddress(), params);
         return vertx.eventBus().request(ext, message, options);
     }
 
@@ -281,13 +286,13 @@ public class VertxUtil {
      * @return 返回未来T结果
      */
     public static <T> Future<Message<T>> futureEvent(Address address, Object message) {
-        DeliveryOptions options = buildOptions();
+        DeliveryOptions options = VertxUtil.buildOptions();
         return vertx.eventBus().request(address.getAddress(), message, options);
     }
 
     public static <T> Future<Message<T>> futureEvent(Address address, Object message, String... params) {
-        String ext = buildAddress(address.getAddress(), params);
-        return vertx.eventBus().request(ext, message, buildOptions());
+        String ext = VertxUtil.buildAddress(address.getAddress(), params);
+        return vertx.eventBus().request(ext, message, VertxUtil.buildOptions());
     }
 
     /**
@@ -371,7 +376,7 @@ public class VertxUtil {
      * @throws TreasureException 运行时异常
      */
     public static <T> T await(Future<T> future) throws TreasureException {
-        return await(future, -1L, null);
+        return VertxUtil.await(future, -1L, null);
     }
 
     /**

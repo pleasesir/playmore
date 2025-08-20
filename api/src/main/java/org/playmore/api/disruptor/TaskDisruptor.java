@@ -95,10 +95,10 @@ public class TaskDisruptor {
         this.waitStrategy = waitStrategy;
         if (asyncSize > 0) {
             consumerThreadIdSet = new HashSet<>(multiConsumer);
-            if (asyncMsgExecutor == null) {
+            if (TaskDisruptor.asyncMsgExecutor == null) {
                 synchronized (TaskDisruptor.class) {
-                    if (asyncMsgExecutor == null) {
-                        asyncMsgExecutor = new AsyncMsgExecutor(new ThreadPoolExecutor(asyncSize, asyncSize,
+                    if (TaskDisruptor.asyncMsgExecutor == null) {
+                        TaskDisruptor.asyncMsgExecutor = new AsyncMsgExecutor(new ThreadPoolExecutor(asyncSize, asyncSize,
                                 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
                                 new NamedThreadFactory("async-publish-message-executor", false)),
                                 new AtomicInteger());
@@ -106,7 +106,7 @@ public class TaskDisruptor {
                 }
             }
 
-            asyncMsgExecutor.counter().getAndIncrement();
+            TaskDisruptor.asyncMsgExecutor.counter().getAndIncrement();
         }
     }
 
@@ -189,13 +189,13 @@ public class TaskDisruptor {
      */
     private void shutdownExecutor() {
         // 检查是否应该关闭异步消息执行器
-        if (asyncPublish && asyncMsgExecutor.counter().decrementAndGet() <= 0
-                && !asyncMsgExecutor.executor().isShutdown()) {
+        if (asyncPublish && TaskDisruptor.asyncMsgExecutor.counter().decrementAndGet() <= 0
+                && !TaskDisruptor.asyncMsgExecutor.executor().isShutdown()) {
             // 开始关闭异步消息执行器的日志记录
             LogUtil.common("开始停止 async-publish-message-executor...");
             try {
                 // 执行优雅地关闭操作，并设置超时时间
-                ThreadUtil.shutdownThreadPool(asyncMsgExecutor.executor(), 5, TimeUnit.MINUTES);
+                ThreadUtil.shutdownThreadPool(TaskDisruptor.asyncMsgExecutor.executor(), 5, TimeUnit.MINUTES);
                 // 关闭完成的日志记录
                 LogUtil.common("async-publish-message-executor停止完成");
             } catch (Throwable t) {
@@ -217,14 +217,43 @@ public class TaskDisruptor {
     public void stop() {
         long startTime = System.nanoTime();
         shutdownExecutor();
-        disruptor.shutdown();
+        disruptor.halt();
         long endTime = System.nanoTime();
         LogUtil.common(disruptorName, " stopping cost time: ", (endTime - startTime) / NumberUtil.MILLION);
     }
 
-    public void timeoutStop() throws TimeoutException {
+    /**
+     * Returns {@code true} if the specified disruptor still has unprocessed events.
+     */
+    private boolean hasBacklog() {
+        final RingBuffer<?> ringBuffer = disruptor.getRingBuffer();
+        return !ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize());
+    }
+
+    private static final int SLEEP_MILLIS_BETWEEN_DRAIN_ATTEMPTS = 50;
+    private static final int MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN = 200;
+
+    public void timeoutStop() {
         long startTime = System.nanoTime();
-        disruptor.shutdown(5, TimeUnit.SECONDS);
+
+        // Calling Disruptor.shutdown() will wait until all enqueued events are fully processed,
+        // but this waiting happens in a busy-spin. To avoid (postpone) wasting CPU,
+        // we sleep in short chunks, up to 10 seconds, waiting for the ringBuffer to drain.
+        for (int i = 0; hasBacklog() && i < TaskDisruptor.MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN; i++) {
+            // give up the CPU for a while
+            ThreadUtil.sleep(TaskDisruptor.SLEEP_MILLIS_BETWEEN_DRAIN_ATTEMPTS);
+        }
+
+        try {
+            disruptor.shutdown(5, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            // 如果停止操作超时，记录日志并继续尝试
+            LogUtil.common("停止队列消息环 name: ", disruptor, ", 等待中..., 等待时间: ",
+                    System.currentTimeMillis() - startTime, "ms");
+            // give up on remaining log events, if any
+            disruptor.halt();
+            return;
+        }
         long endTime = System.nanoTime();
         LogUtil.common(disruptorName, "timeout stopping cost time: ", (endTime - startTime) / NumberUtil.MILLION);
     }
@@ -300,7 +329,7 @@ public class TaskDisruptor {
         // 尝试直接将任务发布到消息环中
         if (!tryPublishNext(task)) {
             // 如果直接发布失败，检查异步消息执行器是否为空
-            if (Objects.isNull(asyncMsgExecutor)) {
+            if (Objects.isNull(TaskDisruptor.asyncMsgExecutor)) {
                 // 如果异步消息执行器为空，记录错误日志并返回
                 LogUtil.error("抛入消息环失败, asyncMsgExecutor is null");
                 return;
@@ -310,7 +339,7 @@ public class TaskDisruptor {
             LogUtil.message("尝试抛入消息环失败, 抛入异步线程池. min: ", getRingBuffer().getMinimumGatingSequence(),
                     ", cur: ", getRingBuffer().getCursor());
             // 使用异步执行器执行任务
-            asyncMsgExecutor.publish(this, task);
+            TaskDisruptor.asyncMsgExecutor.publish(this, task);
             // 唤醒等待的消费者线程
             waitStrategy.signalAllWhenBlocking();
         }

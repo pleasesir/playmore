@@ -1,6 +1,5 @@
 package org.playmore.api.disruptor;
 
-import com.lmax.disruptor.TimeoutException;
 import lombok.Getter;
 import org.playmore.api.disruptor.queue.ConcurrentArrayQueue;
 import org.playmore.api.disruptor.task.BaseTask;
@@ -37,7 +36,7 @@ public class OrderedQueueDisruptor {
 
     public OrderedQueueDisruptor(int queueSize, TaskDisruptor taskDisruptor) {
         this.taskDisruptor = taskDisruptor;
-        queueSize = ceilingNextPowerOfTwo(queueSize);
+        queueSize = OrderedQueueDisruptor.ceilingNextPowerOfTwo(queueSize);
         queueMap = new HashMap<>(queueSize);
         for (long i = 0L; i < queueSize; i++) {
             queueMap.put(i, new ConcurrentArrayQueue<>());
@@ -125,23 +124,10 @@ public class OrderedQueueDisruptor {
             }
 
             // 定义5分钟的时间限制，确保停止过程不会无限期进行
-            long fiveMinMs = 5 * 60 * 1000L;
-            while ((System.currentTimeMillis() - startTime) <= fiveMinMs) {
-                try {
-                    // 尝试停止Disruptor，并设定超时时间
-                    taskDisruptor.timeoutStop();
-                    break;
-                } catch (TimeoutException ignored) {
-                    // 如果停止操作超时，记录日志并继续尝试
-                    LogUtil.common("停止队列消息环 name: ", taskDisruptor.getDisruptorName(), ", 等待中..., 等待时间: ",
-                            System.currentTimeMillis() - startTime, "ms");
-                }
-            }
-
+            // 尝试停止Disruptor，并设定超时时间
+            taskDisruptor.timeoutStop();
             // 强制停止Disruptor，这次没有超时限制
             taskDisruptor.getStatus().set(true);
-            taskDisruptor.stop();
-
             // 记录停止消息环的完成信息，包括耗时
             LogUtil.common("停止队列消息环 name: ", taskDisruptor.getDisruptorName(), ", 耗时: ",
                     System.currentTimeMillis() - startTime, "ms");

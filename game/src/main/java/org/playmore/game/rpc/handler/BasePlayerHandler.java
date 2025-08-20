@@ -1,5 +1,10 @@
 package org.playmore.game.rpc.handler;
 
+import com.google.protobuf.GeneratedMessage;
+import org.playmore.api.domain.PlayerEntity;
+
+import static org.playmore.api.util.VertxUtil.actor;
+
 /**
  * @ClassName BasePlayerHandler
  * @Description: 类描述
@@ -10,5 +15,14 @@ package org.playmore.game.rpc.handler;
  * @UpdateRemark: 更新的信息
  * @Version: 1.0
  */
-public class BasePlayerHandler {
+public abstract class BasePlayerHandler<Result extends GeneratedMessage> extends BaseGatewayHandler<Result>
+        implements PlayerEventHandler<Result> {
+
+    protected PlayerEntity actor;
+
+    @Override
+    protected Result response() throws Exception {
+        actor = actor();
+        return playerEvent();
+    }
 }

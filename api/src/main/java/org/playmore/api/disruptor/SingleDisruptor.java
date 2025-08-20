@@ -62,10 +62,7 @@ public class SingleDisruptor {
                 TaskEventBuffer::new,
                 bufferSize,
                 r -> {
-                    SecurityManager securityManager = System.getSecurityManager();
-                    ThreadGroup group = securityManager != null
-                            ? securityManager.getThreadGroup()
-                            : Thread.currentThread().getThreadGroup();
+                    ThreadGroup group = Thread.currentThread().getThreadGroup();
                     Thread t = new Thread(group, r, disruptorName + "-1");
                     t.setDaemon(false);
                     consumerThreadId = t.threadId();
