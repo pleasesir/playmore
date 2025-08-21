@@ -18,11 +18,9 @@ import static org.playmore.api.util.VertxUtil.actor;
 public abstract class BasePlayerHandler<Result extends GeneratedMessage> extends BaseGatewayHandler<Result>
         implements PlayerEventHandler<Result> {
 
-    protected PlayerEntity actor;
-
     @Override
     protected Result response() throws Exception {
-        actor = actor();
+        playerActor = actor();
         return playerEvent();
     }
 }
