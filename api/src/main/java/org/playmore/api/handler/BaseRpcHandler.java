@@ -43,7 +43,7 @@ public abstract class BaseRpcHandler<M extends BaseRpcMsg> implements Runnable {
     protected int rqCmd;
     protected int rsCmd;
     @Setter
-    protected PlayerEntity playerEntity;
+    protected PlayerEntity playerActor;
 
     public BaseRpcHandler() {
         startTime = System.currentTimeMillis();
@@ -97,7 +97,7 @@ public abstract class BaseRpcHandler<M extends BaseRpcMsg> implements Runnable {
     }
 
     protected void onCompletion() {
-        long roleId = playerEntity == null ? 0 : playerEntity.getRoleId();
+        long roleId = playerActor == null ? 0 : playerActor.getRoleId();
         LogUtil.traceMessage(rsMsg, roleId);
         long costMills;
         if ((costMills = System.currentTimeMillis() - startTime) >= NumberUtil.HALF_OF_HUNDRED) {
