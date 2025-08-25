@@ -8,7 +8,6 @@
         <option value="activateOnBatch" />
         <option value="organizeImports" />
         <option value="reformat" />
-        <option value="unqualifiedStaticMemberAccess" />
         <option value="missingOverrideAnnotation" />
         <option value="useBlocks" />
         <option value="generateSerialVersionUID" />

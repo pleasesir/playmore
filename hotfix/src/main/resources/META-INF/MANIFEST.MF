@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Premain-Class: org.playmore.hotfix.HotfixAgent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+Build-Jdk: 21.0.6

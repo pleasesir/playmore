@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.playmore.api.disruptor.DisruptorConstant.*;
+
 /**
  * @ClassName TaskDisruptor
  * @Description: 类描述
@@ -230,22 +232,19 @@ public class TaskDisruptor {
         return !ringBuffer.hasAvailableCapacity(ringBuffer.getBufferSize());
     }
 
-    private static final int SLEEP_MILLIS_BETWEEN_DRAIN_ATTEMPTS = 50;
-    private static final int MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN = 200;
-
     public void timeoutStop() {
         long startTime = System.nanoTime();
 
         // Calling Disruptor.shutdown() will wait until all enqueued events are fully processed,
         // but this waiting happens in a busy-spin. To avoid (postpone) wasting CPU,
         // we sleep in short chunks, up to 10 seconds, waiting for the ringBuffer to drain.
-        for (int i = 0; hasBacklog() && i < TaskDisruptor.MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN; i++) {
+        for (int i = 0; hasBacklog() && i < MAX_DRAIN_ATTEMPTS_BEFORE_SHUTDOWN; i++) {
             // give up the CPU for a while
-            ThreadUtil.sleep(TaskDisruptor.SLEEP_MILLIS_BETWEEN_DRAIN_ATTEMPTS);
+            ThreadUtil.sleep(SLEEP_MILLIS_BETWEEN_DRAIN_ATTEMPTS);
         }
 
         try {
-            disruptor.shutdown(5, TimeUnit.SECONDS);
+            disruptor.shutdown(DEFAULT_TIME_OUT_MS, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             // 如果停止操作超时，记录日志并继续尝试
             LogUtil.common("停止队列消息环 name: ", disruptor, ", 等待中..., 等待时间: ",

@@ -1,9 +1,11 @@
 package org.playmore.api.disruptor;
 
+import com.lmax.disruptor.TimeoutException;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.playmore.api.disruptor.handler.EventErrorHandler;
 import org.playmore.api.disruptor.handler.TaskEventBuffer;
 import org.playmore.api.disruptor.handler.TaskEventHandler;
@@ -12,7 +14,10 @@ import org.playmore.api.disruptor.thread.ITimerEvent;
 import org.playmore.api.disruptor.thread.TimerThread;
 import org.playmore.common.util.LogUtil;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.playmore.api.disruptor.DisruptorConstant.DEFAULT_TIME_OUT_MS;
 
 /**
  * @ClassName SingleDisruptor
@@ -24,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @UpdateRemark: 更新的信息
  * @Version: 1.0
  */
+@Slf4j
 public class SingleDisruptor {
     /**
      * 是否停止
@@ -107,7 +113,12 @@ public class SingleDisruptor {
                 timer.stop(flag);
             }
 
-            disruptor.shutdown();
+            try {
+                disruptor.shutdown(DEFAULT_TIME_OUT_MS, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException timeout) {
+                log.warn("Disruptor shutdown timeout name: {}", disruptorName);
+                disruptor.halt();
+            }
         }
     }
 

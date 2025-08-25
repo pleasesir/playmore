@@ -44,6 +44,16 @@ public class OrderedQueueDisruptor {
         calculateSize = queueSize - 1;
     }
 
+    public static OrderedQueueDisruptor createStart(TaskDisruptor td) {
+        OrderedQueueDisruptor oqd = new OrderedQueueDisruptor(td);
+        oqd.start();
+        return oqd;
+    }
+
+    public void start() {
+        taskDisruptor.start();
+    }
+
     /**
      * Calculate the next power of 2, greater than or equal to x.
      * <p>

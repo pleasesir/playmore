@@ -5,7 +5,7 @@ import org.playmore.api.account.AccountRoleDto;
 import org.playmore.api.disruptor.OrderedQueueDisruptor;
 import org.playmore.api.disruptor.TaskDisruptor;
 import org.playmore.common.component.AbsComponent;
-import org.playmore.common.component.IComponent;
+import org.playmore.common.component.ComponentLifecycle;
 import org.playmore.common.msg.impl.BatchGatewayMsg;
 import org.playmore.common.msg.impl.GatewayMsg;
 import org.playmore.common.util.LogUtil;
@@ -20,6 +20,8 @@ import org.playmore.pb.BasePb;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.playmore.api.disruptor.OrderedQueueDisruptor.createStart;
+
 /**
  * @ClassName NetComponent
  * @Description: 类描述
@@ -30,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @UpdateRemark: 更新的信息
  * @Version: 1.0
  */
-public class NetComponent implements AbsComponent<TaskDisruptor>, IComponent<GameOrder> {
+public class NetComponent implements AbsComponent<TaskDisruptor>, ComponentLifecycle<GameOrder> {
 
     private OrderedQueueDisruptor queueDisruptor;
     private final AtomicBoolean stopping = new AtomicBoolean(false);
@@ -49,8 +51,7 @@ public class NetComponent implements AbsComponent<TaskDisruptor>, IComponent<Gam
         int consumerSize = Runtime.getRuntime().availableProcessors();
         TaskDisruptor taskDisruptor = new TaskDisruptor(name(), 32768, TaskDisruptor.newWaitStrategy(),
                 stopping, consumerSize, serverConfig.getAsyncMessageEventThreadNum());
-        taskDisruptor.start();
-        queueDisruptor = new OrderedQueueDisruptor(taskDisruptor);
+        queueDisruptor = createStart(taskDisruptor);
         component = this;
     }
 

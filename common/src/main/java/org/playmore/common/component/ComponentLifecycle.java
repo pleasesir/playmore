@@ -1,6 +1,6 @@
 package org.playmore.common.component;
 
-public interface IComponent<T> {
+public interface ComponentLifecycle<T> {
     /**
      * 组件名称
      *
