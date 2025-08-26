@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.playmore.api.disruptor.DisruptorConstant.DEFAULT_TIME_OUT_MS;
 
 /**
- * @ClassName SingleDisruptor
+ * @ClassName OneServerDisruptor
  * @Description: 类描述
  * @Author: Administrator
  * @CreateDate: 2025/8/12 23:29
@@ -30,7 +30,7 @@ import static org.playmore.api.disruptor.DisruptorConstant.DEFAULT_TIME_OUT_MS;
  * @Version: 1.0
  */
 @Slf4j
-public class SingleDisruptor {
+public class OneServerDisruptor {
     /**
      * 是否停止
      */
@@ -57,7 +57,7 @@ public class SingleDisruptor {
     @Getter
     private long consumerThreadId;
 
-    public SingleDisruptor(String disruptorName, int heart, int bufferSize, WaitStrategy waitStrategy) {
+    public OneServerDisruptor(String disruptorName, int heart, int bufferSize, WaitStrategy waitStrategy) {
         this.disruptorName = disruptorName + "-disruptor";
         this.heart = heart;
         if (this.heart > 0) {
