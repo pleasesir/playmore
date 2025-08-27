@@ -24,7 +24,7 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
@@ -40,10 +40,6 @@ import static org.playmore.api.util.VertxUtil.buildOptions;
  */
 @Slf4j
 public class BaseVerticle extends AbstractVerticle {
-    /**
-     * method-map
-     */
-    private HashMap<Address, Integer> methodMap;
     /**
      * method-access
      */
@@ -99,6 +95,7 @@ public class BaseVerticle extends AbstractVerticle {
         Method[] methodArr = this.getClass().getDeclaredMethods();
         methodAccess = MethodAccess.get(this.getClass());
         MethodAccess subMethod = MethodAccess.get(Subscribe.class);
+        Map<Address, Integer> methodMap = new HashMap<>(methodArr.length);
         for (Method method : methodArr) {
             Subscribe subscribe = method.getAnnotation(Subscribe.class);
             if (subscribe == null) {
@@ -112,21 +109,18 @@ public class BaseVerticle extends AbstractVerticle {
                 int subIndex = subMethod.getIndex(subMethodName);
                 Object rs = subMethod.invoke(subscribe, subIndex);
                 if (rs.getClass().isArray()) {
-                    Stream.of((Object[]) rs).forEach(obj -> handleRegister(obj, method));
+                    Stream.of((Object[]) rs).forEach(obj -> handleRegister(obj, methodMap, method));
                 }
             }
         }
     }
 
-    private void handleRegister(Object rs, Method method) {
+    private void handleRegister(Object rs, Map<Address, Integer> methodMap, Method method) {
         if (!(rs instanceof Address address)) {
             return;
         }
         if ("none".equalsIgnoreCase(address.toString())) {
             return;
-        }
-        if (methodMap == null) {
-            methodMap = new HashMap<>(8);
         }
 
         methodMap.compute(address, (k, v) -> {
