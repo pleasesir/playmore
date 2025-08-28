@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.playmore.api.verticle.BaseVerticle.ANN_METHOD_NAMES;
+import static org.playmore.common.constant.VertxContextConst.ANN_METHOD_NAMES;
+
 
 /**
  * @author zhangpeng

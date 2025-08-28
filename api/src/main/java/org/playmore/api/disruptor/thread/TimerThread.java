@@ -1,6 +1,6 @@
 package org.playmore.api.disruptor.thread;
 
-import org.playmore.api.disruptor.SingleDisruptor;
+import org.playmore.api.disruptor.OneServerDisruptor;
 
 import java.util.*;
 
@@ -22,13 +22,13 @@ public class TimerThread extends Timer {
     /**
      * 主线程
      */
-    private final SingleDisruptor main;
+    private final OneServerDisruptor main;
     /**
      * 定时任务
      */
     private TimerTask task;
 
-    public TimerThread(SingleDisruptor main) {
+    public TimerThread(OneServerDisruptor main) {
         super("main" + "-Timer");
         this.main = main;
     }

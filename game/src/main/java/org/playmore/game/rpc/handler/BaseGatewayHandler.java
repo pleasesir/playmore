@@ -36,7 +36,7 @@ public abstract class BaseGatewayHandler<Result extends GeneratedMessage> extend
     protected void onCompletion() {
         buildRsMsg();
         if (Objects.nonNull(rsMsg)) {
-            long roleId = playerEntity == null ? 0 : playerEntity.getRoleId();
+            long roleId = playerActor == null ? 0 : playerActor.getRoleId();
             long costMills;
             if ((costMills = System.currentTimeMillis() - startTime) >= NumberUtil.HALF_OF_HUNDRED) {
                 LogUtil.warn(this.getClass(), "roleId:", roleId, ", costMills:", costMills, "ms");
@@ -63,10 +63,10 @@ public abstract class BaseGatewayHandler<Result extends GeneratedMessage> extend
             return null;
         }
         long roleId;
-        if (playerEntity == null) {
+        if (playerActor == null) {
             roleId = 0;
         } else {
-            roleId = playerEntity.getRoleId();
+            roleId = playerActor.getRoleId();
         }
 
         GatewayMsg rsMsg = GatewayMsg.createMsg(packet.getSeqId(), base.toByteArray());

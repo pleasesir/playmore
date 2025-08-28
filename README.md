@@ -25,12 +25,12 @@ Next-generation high-performance Java game server solution based on coroutine ar
 
 ### Core Components
 
-| Component    | Version | Responsibility            |
-|--------------|---------|---------------------------|
-| OpenJDK      | 21      | Virtual threads/Structured concurrency |
-| Vert.x Core  | 4.5.13  | Event bus/Actor model     |
+| Component    | Version | Responsibility                            |
+|--------------|---------|-------------------------------------------|
+| OpenJDK      | 21      | Virtual threads/Structured concurrency    |
+| Vert.x Core  | 4.5.13  | Event bus/Actor model                     |
 | Spring Boot  | 3.4.2   | Dependency injection/Configuration center |
-| Apache Dubbo | 3.3.3   | RPC framework/Service governance |
+| Apache Dubbo | 3.3.3   | RPC framework/Service governance          |
 
 ## 📚 Architecture Diagram
 
@@ -39,47 +39,10 @@ Next-generation high-performance Java game server solution based on coroutine ar
 
 ### Architecture Features
 
-## 📅 Version Evolution
-
-### 2025.04.08 (build-2100)
-
-- [✅] Basic code migration to new framework completed
-- [✅] Improved some common dependency logic
-
-### 2025.03.10 (build-2100)
-
-- [✅] Improved some common dependency logic
-- [✅] Completed manager service migration and refactoring
-
-### 2025.03.08 (build-2100)
-
-- [✅] Improved some common dependency logic
-- [✅] Completed fight service migration and refactoring
-
-### 2025.03.07 (build-2100)
-
-- [✅] Improved some common dependency logic
-- [✅] Completed account server refactoring
-
-### 2025.02.27 (build-2100)
-
-- [✅] Completed chat module stress testing
-
-### 2025.02.21 (build-2100)
-
-- [✅] Completed chat module refactoring
-- [🔄] Battle system coroutine transformation (in progress)
-- [📊] Added performance monitoring埋点
-
-### 2025.02.14 (build-1840)
-
-- [⬆️] Upgraded to Spring Boot 3.4.2
-- [🔗] Integrated Dubbo 3.3.3, Vert.x 4.5.13
-- [🎯] Established architecture prototype
-
 ---
 
-> **Architecture Philosophy**: Achieve `1:1` request-coroutine mapping through virtual threads, combined with Vert.x's Actor model, to reach higher concurrent performance while maintaining synchronous programming style. 🔥
+> **Architecture Philosophy**: Achieve `1:1` request-coroutine mapping through virtual threads, combined with Vert.x's
+> Actor model, to reach higher concurrent performance while maintaining synchronous programming style. 🔥
 
 ## 🚀 Quick Start
 

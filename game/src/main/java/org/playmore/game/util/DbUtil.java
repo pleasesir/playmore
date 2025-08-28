@@ -24,6 +24,16 @@ import java.lang.reflect.Modifier;
  * @Version: 1.0
  */
 public class DbUtil {
+
+    /**
+     * 获取功能数据
+     *
+     * @param dbRole   db角色
+     * @param funcType 功能类型
+     * @return 功能数据
+     * @throws IllegalAccessException         抛出异常
+     * @throws InvalidProtocolBufferException 抛出异常
+     */
     public static CommonPb.FunctionClientBase getFunctionBase(DbRole dbRole,
                                                               FunctionType funcType)
             throws IllegalAccessException, InvalidProtocolBufferException {

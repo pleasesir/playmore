@@ -1,6 +1,6 @@
 package org.playmore.common.component;
 
-public interface ComponentLifecycle<T> {
+public interface ComponentLifecycle<T extends Enum<T>> {
     /**
      * 组件名称
      *

@@ -16,6 +16,7 @@ import org.playmore.game.component.net.task.SyncRpcOnlineTask;
 import org.playmore.game.component.order.GameOrder;
 import org.playmore.game.domain.db.dao.ServerConfig;
 import org.playmore.pb.BasePb;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,6 +33,7 @@ import static org.playmore.api.disruptor.OrderedQueueDisruptor.createStart;
  * @UpdateRemark: 更新的信息
  * @Version: 1.0
  */
+@Component
 public class NetComponent implements AbsComponent<TaskDisruptor>, ComponentLifecycle<GameOrder> {
 
     private OrderedQueueDisruptor queueDisruptor;

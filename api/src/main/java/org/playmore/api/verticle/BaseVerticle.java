@@ -24,14 +24,16 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.playmore.api.util.VertxUtil.buildOptions;
+import static org.playmore.common.constant.VertxContextConst.ANN_METHOD_NAMES;
 
 /**
  * @Author: zhangpeng
@@ -44,10 +46,6 @@ public class BaseVerticle extends AbstractVerticle {
      * method-access
      */
     private MethodAccess methodAccess;
-    /**
-     * 注解不需要检测的方法
-     */
-    public static final String[] ANN_METHOD_NAMES = new String[]{"equals", "toString", "hashCode", "annotationType"};
 
     @Override
     public void start() throws Exception {
@@ -103,7 +101,7 @@ public class BaseVerticle extends AbstractVerticle {
             }
 
             for (String subMethodName : subMethod.getMethodNames()) {
-                if (ArrayUtils.contains(BaseVerticle.ANN_METHOD_NAMES, subMethodName)) {
+                if (ArrayUtils.contains(ANN_METHOD_NAMES, subMethodName)) {
                     continue;
                 }
                 int subIndex = subMethod.getIndex(subMethodName);
