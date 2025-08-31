@@ -31,6 +31,12 @@ public class RoleFunctionData {
         load(this.getClass());
     }
 
+    /**
+     * 加载字段
+     *
+     * @param clazz 类
+     * @param <T>   功能泛型
+     */
     public <T extends RoleFunctionData> void load(Class<T> clazz) {
         if (RoleFunctionData.FIELD_OFFSET_MAP.size() == FunctionType.values().length) {
             return;
@@ -70,8 +76,15 @@ public class RoleFunctionData {
         return RoleFunctionData.FIELD_OFFSET_MAP.get(ft);
     }
 
+    /**
+     * 设置字段数据
+     *
+     * @param dbRole 存储数据
+     * @param ft     功能类型
+     * @param data   功能字段数据
+     */
     public static void setFieldData(DbRole dbRole, FunctionType ft, byte[] data) {
-        Field field = RoleFunctionData.getField(ft);
+        Field field = getField(ft);
         if (field != null) {
             try {
                 Class<?> clazz = field.getDeclaringClass();

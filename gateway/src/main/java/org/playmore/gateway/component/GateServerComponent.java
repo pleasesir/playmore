@@ -1,5 +1,6 @@
 package org.playmore.gateway.component;
 
+import jakarta.annotation.Resource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.lang.ShutdownHookCallback;
@@ -17,6 +18,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
@@ -39,7 +41,7 @@ public class GateServerComponent implements ComponentLifecycle<GatewayOrder> {
     private static final AtomicIntegerFieldUpdater<GateServerComponent> STATE_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(GateServerComponent.class, "gatewayStatus");
 
-    @Value("${spring.application.name}")
+    @Value("${spring.application.name:}")
     private String serverName;
     @Getter
     @Value("${gateway.port}")
@@ -51,11 +53,13 @@ public class GateServerComponent implements ComponentLifecycle<GatewayOrder> {
     @Value("${dubbo.registry.address}")
     private String nacosAddress;
     @Getter
-    @Value("${environment}")
+    @Value("${environment:}")
     private String environment;
     @Getter
     @Value("${check.connect.second.interval}")
     private int checkConnectInterval;
+    @Resource
+    private List<ComponentLifecycle<?>> components;
     private volatile int gatewayStatus = ST_NOT_STARTED;
 
     /**
@@ -72,13 +76,12 @@ public class GateServerComponent implements ComponentLifecycle<GatewayOrder> {
     /**
      * 初始化网关服务器
      */
-    @SuppressWarnings("unchecked")
     public void init() {
-        AppContext.getContext().getBeansOfType(ComponentLifecycle.class).values().stream()
+        components.stream()
                 .sorted(Comparator.comparing(ComponentLifecycle::order))
                 .forEach(gatewayComponent -> {
-//                    gatewayComponent.start();
-//                    gatewayComponent.afterStart();
+                    gatewayComponent.start();
+                    gatewayComponent.afterStart();
                 });
 
         MessageCodecFactory.initData();
@@ -155,9 +158,11 @@ public class GateServerComponent implements ComponentLifecycle<GatewayOrder> {
             @Override
             public void callback() {
                 if (STATE_UPDATER.compareAndSet(GateServerComponent.this, ST_SHUTTING_DOWN, ST_SHUTDOWN)) {
-                    AppContext.getContext().getBeansOfType(ComponentLifecycle.class).values().stream()
+                    components.stream()
                             .sorted(Comparator.comparing(ComponentLifecycle::order))
                             .forEach(life -> {
+                                life.beforeStop();
+                                life.stop();
                             });
                     LogUtil.common("*******************************网关服务器停服成功*******************************");
                 }

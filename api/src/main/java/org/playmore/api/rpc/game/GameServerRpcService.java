@@ -14,9 +14,19 @@ import org.playmore.common.msg.BaseRpcMsg;
  */
 public interface GameServerRpcService {
 
-
+    /**
+     * 推送
+     *
+     * @param msg 消息
+     */
     void cast(BaseRpcMsg msg);
 
+    /**
+     * 调用
+     *
+     * @param msg 消息
+     * @return 响应
+     */
     BaseRpcMsg call(BaseRpcMsg msg);
 
 }

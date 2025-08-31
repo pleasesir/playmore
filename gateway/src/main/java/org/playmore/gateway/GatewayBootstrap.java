@@ -1,5 +1,8 @@
 package org.playmore.gateway;
 
+import org.apache.logging.log4j.status.StatusLogger;
+import org.playmore.api.config.AppContext;
+import org.playmore.gateway.component.GateServerComponent;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,6 +19,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GatewayBootstrap {
     public static void main(String[] args) {
-        SpringApplication.run(GatewayBootstrap.class, args);
+        try {
+            SpringApplication.run(GatewayBootstrap.class, args);
+            AppContext.getBean(GateServerComponent.class).init();
+        } catch (Exception e) {
+            StatusLogger.getLogger().error(e);
+            System.exit(1);
+        }
     }
 }

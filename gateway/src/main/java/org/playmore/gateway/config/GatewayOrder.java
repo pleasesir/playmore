@@ -12,6 +12,7 @@ package org.playmore.gateway.config;
  */
 public enum GatewayOrder {
 
+    GATEWAY_EXECUTOR(),
     WEBSOCKET_SERVER(),
     GATEWAY_SERVER(),
 }
