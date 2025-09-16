@@ -1,7 +1,8 @@
-package org.playmore.hotfix;
+package org.playmore.hotfix.agent;
+
+import org.slf4j.Logger;
 
 import java.lang.instrument.Instrumentation;
-import java.util.logging.Logger;
 
 /**
  * @ClassName HotfixAgent
@@ -22,20 +23,6 @@ public class HotfixAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) throws Exception {
         init(agentArgs, inst);
-        // 添加transformer在类加载前处理class字节码
-//        inst.addTransformer(new ClassFileTransformer() {
-//            @Override
-//            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-//                                    ProtectionDomain protectionDomain, byte[] classFileBuffer)
-//                    throws IllegalClassFormatException {
-//                byte[] classBytes = HotfixStaticClass.remainHotfixClass(className);
-//                if (classBytes != null) {
-//                    HotfixStaticClass.logger.info("find remain class: " + className);
-//                    return classBytes;
-//                }
-//                return classFileBuffer;
-//            }
-//        });
     }
 
     public static void init(String agentArgs, Instrumentation inst) throws Exception {
@@ -43,8 +30,8 @@ public class HotfixAgent {
         Logger logger = HotfixClassWrapper.logger;
         logger.info("\n=============================HotfixAgent start==============================");
         Class<?>[] classes = HotfixAgent.inst.getAllLoadedClasses();
-        logger.info("HotfixAgent clazz.length: " + classes.length);
-        logger.info("HotfixAgent cur.classloader: " + HotfixAgent.class.getClassLoader());
+        logger.info("HotfixAgent clazz.length: {}", classes.length);
+        logger.info("HotfixAgent cur.classloader: {}", HotfixAgent.class.getClassLoader());
         HotfixClassWrapper hotfixStaticClass = new HotfixClassWrapper();
         hotfixStaticClass.launch();
     }

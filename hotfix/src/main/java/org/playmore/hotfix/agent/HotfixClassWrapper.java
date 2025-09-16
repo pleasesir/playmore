@@ -1,12 +1,13 @@
-package org.playmore.hotfix;
+package org.playmore.hotfix.agent;
+
+import org.playmore.hotfix.thread.HotswapThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.instrument.ClassDefinition;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * @ClassName HotfixWrapper
@@ -19,17 +20,7 @@ import java.util.logging.Logger;
  * @Version: 1.0
  */
 public class HotfixClassWrapper {
-    public static final Logger logger = Logger.getLogger("HOTFIX");
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> {
-        final Thread t = new Thread(null, r, "single-hotfix-thread");
-        t.setDaemon(true);
-        //优先级
-        if (Thread.NORM_PRIORITY != t.getPriority()) {
-            // 标准优先级
-            t.setPriority(Thread.NORM_PRIORITY);
-        }
-        return t;
-    });
+    public static final Logger logger = LoggerFactory.getLogger("HOTFIX");
     private String hotfixPath;
     private static final Map<String, Long> fileTimeMap = new HashMap<>();
     private File hotfixClassDir;
@@ -38,12 +29,13 @@ public class HotfixClassWrapper {
         initProperties();
         File agentDir = HotfixFilePath.getPath();
         hotfixPath = agentDir.getParentFile() + "/hotfix/";
-        logger.info("hotfixPath :" + hotfixPath);
+        logger.info("hotfixPath :{}", hotfixPath);
         hotfixClassDir = new File(hotfixPath);
         //清空热更class文件目录
         readHotfixDir(null, hotfixClassDir, null, true);
         fileTimeMap.clear();
-        executor.scheduleWithFixedDelay(new RefineWork(), 3, 10, TimeUnit.SECONDS);
+        HotswapThreadPool.getExecutor().scheduleWithFixedDelay(new RefineWork(),
+                3, 10, TimeUnit.SECONDS);
     }
 
     private void initProperties() {
@@ -65,20 +57,20 @@ public class HotfixClassWrapper {
                 props.load(in);
                 // 读取配置文件中的属性
                 int checkClassInterval = Integer.parseInt(props.getProperty("check.class.interval", "30000"));
-                logger.info("hotfix checkClassInterval: " + checkClassInterval);
+                logger.info("hotfix checkClassInterval: {}", checkClassInterval);
                 long firstPrintTime = System.currentTimeMillis() + checkClassInterval;
-                logger.info("hotfix firstPrintTime: " + new Date(firstPrintTime));
+                logger.info("hotfix firstPrintTime: {}", new Date(firstPrintTime));
             } else {
                 System.err.println("Configuration file not found.");
             }
         } catch (IOException e) {
-            logger.info("Error loading configuration file: " + e.getMessage());
+            logger.info("Error loading configuration file: {}", e.getMessage());
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    logger.severe("Error closing input stream: " + e.getMessage());
+                    logger.error("Error closing input stream: {}", e.getMessage());
                 }
             }
         }
@@ -97,13 +89,13 @@ public class HotfixClassWrapper {
                         if (modifyTime == null || modifyTime.longValue() != entry.getValue()) {
                             String fullClassName = entry.getKey();
                             String fullPath = hotfixPath + fullClassName.replace(".", "/") + ".class";
-                            logger.info("full class path : " + fullPath);
+                            logger.info("full class path : {}", fullPath);
                             File classFile = new File(fullPath);
                             if (hotfixMap == null) {
                                 hotfixMap = new HashMap<>(16);
                             }
                             if (!classFile.setLastModified(entry.getValue())) {
-                                logger.warning("setLastModified fail : " + fullPath);
+                                logger.warn("setLastModified fail : {}", fullPath);
                             }
                             hotfixMap.put(fullClassName, classFile);
                         }
@@ -133,26 +125,25 @@ public class HotfixClassWrapper {
                 File classFile = hotfixMap.remove(className);
                 byte[] classBytes = fileToBytes(classFile);
                 if (classBytes == null) {
-                    logger.severe("class file not found : " + className);
+                    logger.error("class file not found : {}", className);
                     continue;
                 }
                 // 热更成功的记录文件信息
                 fileTimeMap.put(className, classFile.lastModified());
                 ClassDefinition classDefinition = new ClassDefinition(clazz, classBytes);
                 list.add(classDefinition);
-                logger.info(String.format("prepare hotfix class %s, classloader: %s", clazz.getName(), cl));
+                logger.info("prepare hotfix class {}, classloader: {}", clazz.getName(), cl);
             }
         }
         if (!hotfixMap.isEmpty()) {
-            logger.warning("hotfix class is empty, remain need hotfix classMap: " + hotfixMap + ", fileTimeMap: "
-                    + fileTimeMap);
+            logger.warn("hotfix class is empty, remain need hotfix classMap: {}, fileTimeMap: {}", hotfixMap, fileTimeMap);
         }
         if (list.isEmpty()) {
             return;
         }
         HotfixAgent.inst.redefineClasses(list.toArray(new ClassDefinition[0]));
-        logger.info(String.format("hotfix success, class count : %d, costTime : %d",
-                list.size(), System.currentTimeMillis() - startTime));
+        logger.info("hotfix success, class count : {}, costTime : {}", list.size(),
+                System.currentTimeMillis() - startTime);
     }
 
     /**
@@ -187,7 +178,7 @@ public class HotfixClassWrapper {
                     fileTimeMap.put(clsFullName, curFile.lastModified());
                 }
                 if (bDelete && curFile.delete()) {
-                    logger.warning("delete class file :" + curFile.getName());
+                    logger.warn("delete class file :{}", curFile.getName());
                 }
             } catch (Exception e) {
                 printLog(e);
@@ -199,10 +190,10 @@ public class HotfixClassWrapper {
 
 
     public static void printLog(Throwable e) {
-        logger.severe(String.format("错误信息 :%s", e));
+        logger.warn("错误信息 : ", e);
         StackTraceElement[] st = e.getStackTrace();
         for (StackTraceElement stackTraceElement : st) {
-            logger.severe(String.format("错误信息 :%s", stackTraceElement.toString()));
+            logger.warn("错误信息 :{}", stackTraceElement.toString());
         }
     }
 
@@ -216,7 +207,7 @@ public class HotfixClassWrapper {
             }
             return out.toByteArray();
         } catch (IOException e) {
-            logger.severe("将文件转换为字节数组时发生错误: " + e);
+            logger.error("将文件转换为字节数组时发生错误: ", e);
             return null;
         }
     }

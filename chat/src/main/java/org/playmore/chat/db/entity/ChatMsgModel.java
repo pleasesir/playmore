@@ -1,11 +1,8 @@
 package org.playmore.chat.db.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import lombok.Getter;
 import lombok.Setter;
 import org.playmore.chat.db.handler.ListStringTypeHandler;
 import org.playmore.chat.db.handler.MapStringTypeHandler;
@@ -19,6 +16,7 @@ import java.util.Map;
  * @Author zhangdh
  * @Date 2021-12-01 19:16
  */
+@Getter
 @TableName(value = "chat_msg", autoResultMap = true)
 public class ChatMsgModel extends Model<ChatMsgModel> implements Comparable<ChatMsgModel> {
     @Serial
@@ -83,57 +81,9 @@ public class ChatMsgModel extends Model<ChatMsgModel> implements Comparable<Chat
     @Setter
     private long chatTime;
 
-    public Long getUid() {
-        return uid;
-    }
-
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public int getChlId() {
-        return chlId;
-    }
-
-    public int getMsgType() {
-        return msgType;
-    }
-
-    public String getMsgContent() {
-        return msgContent;
-    }
-
-    public Map<String, String> getMsgParam() {
-        return msgParam;
-    }
-
-    public long getChatTime() {
-        return chatTime;
-    }
-
-    public int getMsgStyle() {
-        return msgStyle;
-    }
-
-    public List<String> getExtParam() {
-        return extParam;
-    }
-
-    public long getMsgId() {
-        return msgId;
-    }
-
-    public Integer getTemplateId() {
-        return templateId;
-    }
-
     public ChatMsgModel setTemplateId(Integer templateId) {
         this.templateId = templateId;
         return this;
-    }
-
-    public long getUniqueMsgId() {
-        return uniqueMsgId;
     }
 
     public ChatMsgModel setUniqueMsgId(long uniqueMsgId) {

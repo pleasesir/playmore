@@ -1,11 +1,9 @@
 package org.playmore.chat.db.mapper;
 
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.playmore.chat.constant.DBConstant;
 import org.playmore.chat.db.entity.ChatMsgModel;
 
 /**
@@ -14,7 +12,6 @@ import org.playmore.chat.db.entity.ChatMsgModel;
  * @Date 2021-12-01 20:22
  */
 @Mapper
-@DS(DBConstant.DATASOURCE_SHARDING_CENTER)
 public interface ChatMsgMapper extends BaseMapper<ChatMsgModel> {
 
     /**

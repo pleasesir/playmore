@@ -187,8 +187,7 @@ public class BaseVerticle extends AbstractVerticle {
      * @param message 请求消息体
      */
     protected void sendEvent(Address address, Object message, String... ads) {
-        String realAddress = VertxUtil.buildAddress(address.getAddress(), ads);
-        VertxUtil.sendEvent(realAddress, message);
+        VertxUtil.sendEvent(address, message, ads);
     }
 
     /**

@@ -12,6 +12,7 @@ import org.playmore.common.msg.ChannelId;
 import org.playmore.common.msg.impl.GatewayMsg;
 import org.playmore.common.util.CheckNull;
 import org.playmore.common.util.LogUtil;
+import org.playmore.gateway.bootstrap.GateServerBootstrap;
 import org.playmore.gateway.component.GateExecutorComponent;
 import org.playmore.gateway.component.GateNetComponent;
 import org.playmore.gateway.component.GateServerComponent;
@@ -45,12 +46,14 @@ public class GatewayMessageDispatcher extends SimpleChannelInboundHandler<Gatewa
     private final GameServerRpcService gameServerRpcService;
     private final GateServerComponent gatewayServer;
     private final GateExecutorComponent executor;
+    private final GateServerBootstrap bootstrap;
 
     public GatewayMessageDispatcher(GateNetComponent server) {
         this.server = server;
         gameServerRpcService = AppContext.getBean(GameServerRpcService.class);
         gatewayServer = AppContext.getBean(GateServerComponent.class);
         executor = AppContext.getBean(GateExecutorComponent.class);
+        bootstrap = AppContext.getBean(GateServerBootstrap.class);
     }
 
     @Override
@@ -188,7 +191,7 @@ public class GatewayMessageDispatcher extends SimpleChannelInboundHandler<Gatewa
      * @param ctx ChannelHandlerContext
      */
     private void notifyGameServer(ChannelHandlerContext ctx) {
-        if (gatewayServer.isStarted()) {
+        if (bootstrap.isStarted()) {
             // 通知游戏服客户端断开连接
             Integer gameServerId = ChannelUtil.getGameServerId(ctx);
             ChannelId seqId = ChannelUtil.getChannelId(ctx);

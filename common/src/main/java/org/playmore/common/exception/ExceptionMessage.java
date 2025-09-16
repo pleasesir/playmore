@@ -1,7 +1,7 @@
 package org.playmore.common.exception;
 
 import io.netty.util.internal.StringUtil;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.playmore.common.util.TurPle;
 
@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Slf4j
+@Log4j2
 public class ExceptionMessage {
     /**
      * 抛出错误信息拼接
      *
-     * @param message
-     * @return
+     * @param message 错误信息
+     * @return 错误信息
      */
     public static TurPle<String, Throwable> throwableSpliceMsg(Object... message) {
         if (null != message) {

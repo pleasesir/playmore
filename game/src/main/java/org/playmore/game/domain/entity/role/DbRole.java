@@ -15,13 +15,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DbRole {
+public class DbRole extends RoleFunctionData {
 
     private final long roleId;
 
     private boolean needSave;
 
     public DbRole(long roleId) {
+        super();
         this.roleId = roleId;
     }
 

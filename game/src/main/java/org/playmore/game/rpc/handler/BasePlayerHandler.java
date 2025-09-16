@@ -1,7 +1,6 @@
 package org.playmore.game.rpc.handler;
 
 import com.google.protobuf.GeneratedMessage;
-import org.playmore.api.domain.PlayerEntity;
 
 import static org.playmore.api.util.VertxUtil.actor;
 

@@ -103,6 +103,8 @@ public class RoleFunctionData {
             } catch (IllegalAccessException e) {
                 LogUtil.error(e);
             }
+        } else {
+            LogUtil.ERROR_LOGGER.error("setFieldData error, ft: {}, data: {}", ft, data);
         }
     }
 }

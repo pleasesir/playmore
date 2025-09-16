@@ -1,4 +1,4 @@
-package org.playmore.hotfix;
+package org.playmore.hotfix.agent;
 
 import lombok.extern.slf4j.Slf4j;
 
